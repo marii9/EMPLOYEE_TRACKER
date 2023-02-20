@@ -1,8 +1,11 @@
 
+const { printTable } = require('console-table-printer');
 const inquirer = require('inquirer');
 const queries = require('./queries');
 
+// Define an async function called "init"
 async function init() {
+  // Ask the user what they would like to do using the inquirer package
   const answer = await inquirer.prompt({
     type: 'list',
     name: 'action',
@@ -18,37 +21,47 @@ async function init() {
     ]
   });
 
+  // Use a switch statement to handle the user's choice
   switch (answer.action) {
     case 'View all departments':
+      // Call the "getAllDepartments" function from "queries" module and print the results using "printTable" package
       const departments = await queries.getAllDepartments();
-      console.table(departments);
+      printTable(departments);
+      // Call the "init" function to restart the process
       init();
       break;
 
     case 'View all roles':
+      // Call the "getAllRoles" function from "queries" module and print the results using "printTable" package
       const roles = await queries.getAllRoles();
-      console.table(roles);
+      printTable(roles);
+      // Call the "init" function to restart the process
       init();
       break;
 
     case 'View all employees':
+      // Call the "getAllEmployees" function from "queries" module and print the results using "printTable" package
       const employees = await queries.getAllEmployees();
-      console.table(employees);
+      printTable(employees);
+      // Call the "init" function to restart the process
       init();
       break;
 
     case 'Add a department':
+      // Ask the user for the name of the new department using inquirer and call the "addDepartment" function from "queries" module to add it to the database
       const newDept = await inquirer.prompt({
         type: 'input',
         name: 'name',
         message: 'Enter the name of the new department:'
       });
       await queries.addDepartment(newDept.name);
+      // Notify the user that the department has been added and call the "init" function to restart the process
       console.log('New department added successfully!');
       init();
       break;
 
     case 'Add a role':
+      // Ask the user for the title, salary, and department of the new role using inquirer and call the "addRole" function from "queries" module to add it to the database
       const newRole = await inquirer.prompt([
         {
           type: 'input',
@@ -68,9 +81,11 @@ async function init() {
         }
       ]);
       await queries.addRole(newRole.title, newRole.salary, newRole.department);
+      // Notify the user that the role has been added and call the "init" function to restart the process
       console.log('New role added successfully!');
       init();
       break;
+
 
     case 'Add an employee':
       const newEmp = await inquirer.prompt([
@@ -94,15 +109,17 @@ async function init() {
           type: 'list',
           name: 'manager',
           message: "Select the employee's manager:",
-          choices: await queries.getAllManagers()
+          choices: await queries.getAllEmployeesNames()
         }
       ]);
+       // Add the new employee to the database
       await queries.addEmployee(newEmp.first_name, newEmp.last_name, newEmp.role, newEmp.manager);
       console.log('New employee added successfully!');
       init();
       break;
 
     case 'Update an employee role':
+      // Prompt user to select an employee and a new role
       const employeesList = await queries.getAllEmployeesNames();
       const chosenEmp = await inquirer.prompt({
         type: 'list',
@@ -122,10 +139,11 @@ async function init() {
       break;
 
     default:
+      // If user enters an invalid action, display an error message and return to the main menu
       console.log('Invalid action!');
       init();
       break;
     }
     }
-    
+    // Call the init() function to display the main menu
     init();
