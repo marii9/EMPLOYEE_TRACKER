@@ -2,22 +2,6 @@
 const inquirer = require('inquirer');
 const queries = require('./queries');
 
-const mysql = require('mysql2');
-
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'password',
-  database: 'employee_tracker'
-});
-
-pool.getConnection((err, connection) => {
-  if (err) throw err;
-  console.log('Connected to database!');
-
-  connection.release();
-});
-
 async function init() {
   const answer = await inquirer.prompt({
     type: 'list',
@@ -38,16 +22,19 @@ async function init() {
     case 'View all departments':
       const departments = await queries.getAllDepartments();
       console.table(departments);
+      init();
       break;
 
     case 'View all roles':
       const roles = await queries.getAllRoles();
       console.table(roles);
+      init();
       break;
 
     case 'View all employees':
       const employees = await queries.getAllEmployees();
       console.table(employees);
+      init();
       break;
 
     case 'Add a department':
@@ -58,6 +45,7 @@ async function init() {
       });
       await queries.addDepartment(newDept.name);
       console.log('New department added successfully!');
+      init();
       break;
 
     case 'Add a role':
@@ -81,6 +69,7 @@ async function init() {
       ]);
       await queries.addRole(newRole.title, newRole.salary, newRole.department);
       console.log('New role added successfully!');
+      init();
       break;
 
     case 'Add an employee':
@@ -110,6 +99,7 @@ async function init() {
       ]);
       await queries.addEmployee(newEmp.first_name, newEmp.last_name, newEmp.role, newEmp.manager);
       console.log('New employee added successfully!');
+      init();
       break;
 
     case 'Update an employee role':
@@ -128,10 +118,12 @@ async function init() {
       });
       await queries.updateEmployeeRole(chosenEmp.name, chosenRole.role);
       console.log('Employee role updated successfully!');
+      init();
       break;
 
     default:
       console.log('Invalid action!');
+      init();
       break;
     }
     }
