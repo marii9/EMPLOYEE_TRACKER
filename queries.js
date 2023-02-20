@@ -57,17 +57,11 @@ async function addDepartment(name) {
   return { id: rows.insertId, name };
 }
 
-async function addRole(role) {
-    try {
-      const [result] = await pool.execute(
-        "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
-        [role.title, role.salary, role.department.name] // use department.id instead of department.name
-      );
-      console.log(`Role ${role.title} added with id ${result.insertId}`);
-      return result;
-    } catch (error) {
-      console.error(error);
-    }
+async function addRole(title, salary, department_id) {
+    const sql = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
+    const params = [title, salary, parseInt(department_id)];
+    const [result] = await  pool.execute(sql, params);
+    return result.insertId;
   }
 
 async function addEmployee(firstName, lastName, roleId, managerId) {
@@ -88,8 +82,8 @@ async function getAllEmployeesNames() {
     return result.affectedRows > 0;
   }
 async function getAllRolesTitles() {
-    const [rows, fields] = await pool.execute('SELECT title FROM role');
-    return rows.map(row => row.title);
+    const [rows, fields] = await pool.execute('SELECT id, title FROM role');
+    return rows.map(row => ({name:row.title, value:row.id}));
   }
 
 module.exports = { getAllDepartments, getAllRoles, getAllEmployees, getAllEmployeesNames, getAllDepartmentsNames,  addDepartment, getAllRolesTitles, getAllManagers,  addRole, addEmployee, updateEmployeeRole };
