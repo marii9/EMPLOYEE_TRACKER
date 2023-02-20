@@ -27,7 +27,7 @@ async function getAllDepartments() {
   const [rows, fields] = await pool.execute('SELECT * FROM department');
   return rows;
 }
-async function getAllDepartmentNames() {
+async function getAllDepartmentsNames() {
     const [rows, fields] = await pool.execute('SELECT name FROM department');
     return rows.map(row => row.name);
   }
@@ -57,25 +57,39 @@ async function addDepartment(name) {
   return { id: rows.insertId, name };
 }
 
-async function addRole(title, salary, departmentId) {
-  const [rows, fields] = await pool.execute('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, departmentId]);
-  return { id: rows.insertId, title, salary, department_id: departmentId };
-}
+async function addRole(role) {
+    try {
+      const [result] = await pool.execute(
+        "INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)",
+        [role.title, role.salary, role.department.name] // use department.id instead of department.name
+      );
+      console.log(`Role ${role.title} added with id ${result.insertId}`);
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
 async function addEmployee(firstName, lastName, roleId, managerId) {
-  const [rows, fields] = await pool.execute('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [firstName, lastName, roleId, managerId]);
+    roleId = parseInt(roleId)
+    const [rows, fields] = await pool.execute('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [firstName, lastName, roleId, managerId || null]);
   return { id: rows.insertId, first_name: firstName, last_name: lastName, role_id: roleId, manager_id: managerId };
 }
 
-async function updateEmployeeRole(employeeName, newRoleTitle) {
-  const [employee] = await pool.execute('SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?', [employeeName]);
-  const [newRole] = await pool.execute('SELECT id FROM role WHERE title = ?', [newRoleTitle]);
-  const [result] = await pool.execute('UPDATE employee SET role_id = ? WHERE id = ?', [newRole.id, employee.id]);
-  return result.affectedRows > 0;
-}
-async function getAllRoleTitles() {
+async function getAllEmployeesNames() {
+    const [rows, fields] = await pool.execute('SELECT CONCAT(first_name, " ", last_name) AS name FROM employee');
+    return rows.map(row => row.name);
+  }
+
+  async function updateEmployeeRole(employeeName, newRoleTitle) {
+    const [employee] = await pool.execute('SELECT id FROM employee WHERE CONCAT(first_name, " ", last_name) = ?', [employeeName]);
+    const [newRole] = await pool.execute('SELECT id FROM role WHERE title = ?', [newRoleTitle]);
+    const [result] = await pool.execute('UPDATE employee SET role_id = ? WHERE id = ?', [newRole?.id ?? null, employee?.id ?? null]);
+    return result.affectedRows > 0;
+  }
+async function getAllRolesTitles() {
     const [rows, fields] = await pool.execute('SELECT title FROM role');
     return rows.map(row => row.title);
   }
 
-module.exports = { getAllDepartments, getAllRoles, getAllEmployees,getAllDepartmentNames,  addDepartment, getAllRoleTitles, getAllManagers,  addRole, addEmployee, updateEmployeeRole };
+module.exports = { getAllDepartments, getAllRoles, getAllEmployees, getAllEmployeesNames, getAllDepartmentsNames,  addDepartment, getAllRolesTitles, getAllManagers,  addRole, addEmployee, updateEmployeeRole };
