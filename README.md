@@ -16,7 +16,7 @@ must have node.js installed and have mySQL , then need to install packages such 
 
 ## Usage
 
-cretes a organized sheet for employees in which you can add employees and roles and departments
+creates a organized sheet for employees in which you can add employees and roles and departments
 
 ## Contributing
 
