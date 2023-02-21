@@ -15,6 +15,7 @@ This is a Node.js application for managing employee data, including departments,
 must have node.js installed and have mySQL , then need to install packages such as, console.table, inquirer
 
 ## Usage
+Here is Video Usage: [Untitled_ Feb 20, 2023 6_44 PM.webm](https://user-images.githubusercontent.com/116024194/220216000-73efd394-5544-4312-adf7-7d6343fbeef3.webm)
 
 creates a organized sheet for employees in which you can add employees and roles and departments
 
