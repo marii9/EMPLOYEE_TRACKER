@@ -16,6 +16,7 @@ must have node.js installed and have mySQL , then need to install packages such 
 
 ## Usage
 Here is Video Usage: [Untitled_ Feb 20, 2023 6_44 PM.webm](https://user-images.githubusercontent.com/116024194/220216000-73efd394-5544-4312-adf7-7d6343fbeef3.webm)
+![Screenshot 2023-02-20 191437](https://user-images.githubusercontent.com/116024194/220216290-04c538b8-a6f8-40ce-812f-a2c4b6e0a413.png)
 
 creates a organized sheet for employees in which you can add employees and roles and departments
 
